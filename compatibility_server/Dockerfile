@@ -31,5 +31,5 @@ EXPOSE 8888
 # Restart each worker periodically so that `auto_remove`
 # (https://docker-py.readthedocs.io/en/stable/containers.html) has a chance to work.
 CMD cd compatibility_checker && \
-  gunicorn -b 0.0.0.0:8888 -w 4 --max-requests 20 --max-requests-jitter 10 --timeout 120 \
+  gunicorn -b 0.0.0.0:8888 -w 4 --max-requests 20 --max-requests-jitter 10 --timeout 120 --log-level debug\
            compatibility_checker_server:app

@@ -139,7 +139,7 @@ def main():
     logging.info('Running server with:\n%s', pprint.pformat(vars(args)))
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format='%(levelname)-8s %(asctime)s ' +
                '%(filename)s:%(lineno)s] %(message)s')
 
