@@ -1,3 +1,19 @@
 steps:
 - name: gcr.io/cloud-builders/git
   args: ['clone', 'https://source.developers.google.com/p/google.com:python-compatibility-dashboard/r/compatibility-dashboard']
+  id: clone
+- name: 'ubuntu'
+  args: ['bash', './create_trigger.bash']
+  id: create_trigger
+- name: gcr.io/cloud-builders/git
+  args: ['checkout', 'dashboard']
+  id: checkout
+- name: gcr.io/cloud-builders/git
+  args: ['add', '-A']
+  id: add
+- name: gcr.io/cloud-builders/git
+  args: ['commit', '-m', 'update']
+  id: update
+- name: gcr.io/cloud-builders/git
+  args: ['push']
+  id: push
