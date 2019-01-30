@@ -12,6 +12,12 @@ steps:
   args: ['add', '-A']
   id: add
 - name: gcr.io/cloud-builders/git
+  args: ['config', 'user.email', 'yanhuil@google.com']
+  id: set_email
+- name: gcr.io/cloud-builders/git
+  args: ['config', 'user.name', 'Build Trigger']
+  id: set_name
+- name: gcr.io/cloud-builders/git
   args: ['commit', '-m', 'update']
   id: update
 - name: gcr.io/cloud-builders/git
