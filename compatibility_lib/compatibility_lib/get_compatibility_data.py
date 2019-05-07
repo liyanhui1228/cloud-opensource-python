@@ -28,7 +28,7 @@ from compatibility_lib import compatibility_store
 from compatibility_lib import configs
 from compatibility_lib import package
 
-checker = compatibility_checker.CompatibilityChecker(max_workers=800)
+checker = compatibility_checker.CompatibilityChecker(max_workers=20)
 store = compatibility_store.CompatibilityStore()
 
 PY2 = '2'
@@ -46,6 +46,7 @@ class ConnectionError(Exception):
 
 def _result_dict_to_compatibility_result(results):
     res_list = []
+    conflict_packages = {}
 
     for item in results:
         res_dict = item[0]
@@ -54,20 +55,26 @@ def _result_dict_to_compatibility_result(results):
         packages_list = [package.Package(pkg)
                          for pkg in result_content.get('packages')]
         details = result_content.get('description')
-        timestamp = datetime.datetime.now().isoformat()
-        dependency_info = result_content.get('dependency_info')
 
-        compatibility_result = compatibility_store.CompatibilityResult(
-            packages=packages_list,
-            python_major_version=python_version,
-            status=compatibility_store.Status(check_result),
-            details=details,
-            timestamp=timestamp,
-            dependency_info=dependency_info
-        )
-        res_list.append(compatibility_result)
+        if check_result != 'SUCCESS':
+            print(packages_list, details)
+            conflict_packages[str(packages_list)] = details
 
-    return res_list
+
+        # timestamp = datetime.datetime.now().isoformat()
+        # dependency_info = result_content.get('dependency_info')
+        #
+        # compatibility_result = compatibility_store.CompatibilityResult(
+        #     packages=packages_list,
+        #     python_major_version=python_version,
+        #     status=compatibility_store.Status(check_result),
+        #     details=details,
+        #     timestamp=timestamp,
+        #     dependency_info=dependency_info
+        # )
+        # res_list.append(compatibility_result)
+
+    return conflict_packages
 
 
 @contextlib.contextmanager
@@ -127,8 +134,9 @@ def write_to_status_table(
         packages=self_packages, pkg_sets=pair_packages)
     res_list = _result_dict_to_compatibility_result(results)
 
-    with run_cloud_sql_proxy(cloud_sql_proxy_path):
-        store.save_compatibility_statuses(res_list)
+    # with run_cloud_sql_proxy(cloud_sql_proxy_path):
+    #     store.save_compatibility_statuses(res_list)
+    print(res_list)
 
 
 if __name__ == '__main__':

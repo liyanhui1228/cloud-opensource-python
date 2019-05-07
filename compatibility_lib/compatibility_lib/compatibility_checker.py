@@ -23,7 +23,7 @@ import retrying
 from compatibility_lib import configs
 from compatibility_lib import utils
 
-SERVER_URL = 'http://104.197.8.72'
+SERVER_URL = 'http://0.0.0.0:8888'
 
 UNKNOWN_STATUS_RESULT = {
     'result': 'UNKNOWN',
@@ -37,6 +37,7 @@ class CompatibilityChecker(object):
 
     def check(self, packages, python_version):
         """Call the checker server to get back status results."""
+        print(packages)
         if not utils._is_package_in_whitelist(packages):
 
             UNKNOWN_STATUS_RESULT['packages'] = packages
@@ -52,6 +53,7 @@ class CompatibilityChecker(object):
         # docker timeout (300 seconds).
         result = requests.get(SERVER_URL, params=data, timeout=299)
         content = result.content.decode('utf-8')
+        print('Done' + str(packages))
 
         return json.loads(content), python_version
 
@@ -84,7 +86,7 @@ class CompatibilityChecker(object):
 
         check_singles = []
         if python_version is None:
-            for py_ver in ['2', '3']:
+            for py_ver in ['3']:
                 # Remove the package not supported in the python_version
                 filtered_single = self.filter_packages(packages, py_ver)
                 for pkg in filtered_single:
@@ -100,7 +102,7 @@ class CompatibilityChecker(object):
 
         check_pairs = []
         if python_version is None:
-            for py_ver in ['2', '3']:
+            for py_ver in ['3']:
                 filtered_pkgs = []
                 for pkgs in pkg_sets:
                     if list(pkgs) != self.filter_packages(pkgs,
